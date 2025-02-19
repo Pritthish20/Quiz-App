@@ -10,7 +10,7 @@ const QuestionCard = ({ questionData, onNext, score, setScore }) => {
 
   useEffect(() => {
     if (timeLeft === 0) {
-      handleNext();
+      handleNext(score); // Ensure the latest score is passed
       return;
     }
 
@@ -33,11 +33,10 @@ const QuestionCard = ({ questionData, onNext, score, setScore }) => {
     setLoading(false);
   };
 
-  const handleNext = async () => {
+  const handleNext = async (updatedScore) => {
     setLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Ensures loader is visible for at least 1 second
     try {
-      await onNext();
+      await onNext(updatedScore); // Pass latest score to `onNext`
     } catch (error) {
       console.error("Error loading next question:", error);
     } finally {
@@ -45,49 +44,54 @@ const QuestionCard = ({ questionData, onNext, score, setScore }) => {
     }
   };
 
-  const handleOptionClick = async (option) => {
-    if (loading) return;
-    
-    setSelectedOption(option);
-    
-    await new Promise(resolve => setTimeout(resolve, Math.random() * (750 - 500) + 500));
-    
-    const correct = option === questionData.answer;
-    setIsCorrect(correct);
-    
-    if (correct) {
-      setScore(prev => prev + 1);
-    }
-    
-    await new Promise(resolve => setTimeout(resolve, 500));
-    handleNext();
-  };
-
   const handleInputChange = (e) => {
     if (loading) return;
     setInputValue(e.target.value);
   };
 
-  const handleIntegerSubmit = async () => {
+  const handleOptionClick = async (option) => {
     if (loading) return;
     
-    await new Promise(resolve => setTimeout(resolve, Math.random() * (750 - 500) + 500));
-    
-    const correct = parseInt(inputValue, 10) === questionData.answer;
+    setSelectedOption(option);
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    const correct = option === questionData.answer;
     setIsCorrect(correct);
     
+    let newScore = score; // Capture current score
     if (correct) {
-      setScore(prev => prev + 1);
+      newScore = score + 1; // Calculate new score
+      setScore(newScore); // Update state
     }
+
+    await new Promise(resolve => setTimeout(resolve, 500));
+    onNext(newScore); // Pass updated score
+};
+
+const handleIntegerSubmit = async () => {
+    if (loading) return;
     
     await new Promise(resolve => setTimeout(resolve, 500));
-    handleNext();
-  };
+
+    const correct = parseInt(inputValue, 10) === questionData.answer;
+    setIsCorrect(correct);
+
+    let newScore = score;
+    if (correct) {
+      newScore = score + 1;
+      setScore(newScore);
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 500));
+    onNext(newScore); // Pass updated score
+};
+
+ 
 
   if (loading) {
     return (
       <div className="p-8 bg-white shadow-lg rounded-lg w-full max-w-3xl mx-auto min-h-[400px] flex flex-col items-center justify-center">
-        <Loader/>
+        <Loader />
       </div>
     );
   }

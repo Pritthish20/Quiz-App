@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const Header = ({ timeLeft,setTimeLeft,status,setStatus }) => {
+const Header = ({ timeLeft,setTimeLeft,status,setStatus,name }) => {
  
 
   useEffect(() => {
@@ -33,8 +33,11 @@ const Header = ({ timeLeft,setTimeLeft,status,setStatus }) => {
       
       {/* Timer Section */}
       {status==="active" && (
-        <div className="mt-2 text-lg bg-orange-500 px-4 py-1 rounded-lg">
+        <div className="flex gap-3">
+          <div className="mt-2 text-xl ">{name} </div>
+          <div className="mt-2 text-lg bg-orange-500 px-4 py-1 rounded-lg">
           <span>Total Time Left: {formatTime(timeLeft)}</span>
+        </div>
         </div>
       )}
     </header>

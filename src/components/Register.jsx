@@ -1,7 +1,6 @@
 import { useState } from "react";
 
-const RegisterPage = ({ onStart }) => {
-  const [name, setName] = useState("");
+const RegisterPage = ({ onStart ,name,setName}) => {
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100 px-4">
